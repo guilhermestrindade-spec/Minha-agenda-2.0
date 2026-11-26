@@ -1,0 +1,1918 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#172554">
+<title>Minha Agenda Inteligente</title>
+
+<style>
+:root {
+  --azul:#172554;
+  --azul2:#2563eb;
+  --fundo:#f1f5f9;
+  --branco:#fff;
+  --texto:#1e293b;
+  --cinza:#64748b;
+  --verde:#16a34a;
+  --vermelho:#dc2626;
+  --laranja:#ea580c;
+  --borda:#dbe2ea;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:var(--fundo);
+  color:var(--texto);
+}
+button,input,select,textarea { font:inherit; }
+button {
+  border:0;
+  border-radius:8px;
+  padding:10px 13px;
+  font-weight:bold;
+  cursor:pointer;
+}
+input,select,textarea {
+  width:100%;
+  padding:11px;
+  border:1px solid var(--borda);
+  border-radius:8px;
+  background:white;
+  outline:none;
+}
+input:focus,select:focus,textarea:focus { border-color:var(--azul2); }
+textarea { resize:vertical; min-height:75px; }
+.oculto { display:none !important; }
+
+#telaLogin {
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+  background:linear-gradient(135deg,#172554,#2563eb);
+}
+.login-card {
+  width:100%;
+  max-width:400px;
+  padding:26px;
+  background:white;
+  border-radius:16px;
+  box-shadow:0 10px 35px #0003;
+}
+.login-card h1 { color:var(--azul); text-align:center; }
+.login-card p {
+  color:var(--cinza);
+  text-align:center;
+  line-height:1.5;
+}
+.login-card label {
+  display:block;
+  margin:15px 0 6px;
+  font-weight:bold;
+}
+.login-card button {
+  width:100%;
+  margin-top:18px;
+  color:white;
+  background:var(--azul2);
+}
+#mensagemLogin {
+  margin-top:14px;
+  text-align:center;
+  font-weight:bold;
+}
+header {
+  background:var(--azul);
+  color:white;
+  padding:16px;
+  text-align:center;
+}
+header h1 { margin:0; font-size:21px; }
+header p { margin:6px 0 0; font-size:13px; opacity:.85; }
+.container {
+  width:100%;
+  max-width:900px;
+  margin:auto;
+  padding:12px;
+}
+.painel {
+  background:white;
+  padding:14px;
+  margin-bottom:12px;
+  border-radius:12px;
+  box-shadow:0 2px 8px #0000000a;
+}
+.painel h2 {
+  margin:0 0 13px;
+  color:var(--azul);
+  font-size:18px;
+}
+.linha { display:flex; gap:10px; flex-wrap:wrap; }
+.campo { flex:1; min-width:130px; margin-bottom:12px; }
+.campo label {
+  display:block;
+  margin-bottom:6px;
+  font-size:13px;
+  font-weight:bold;
+}
+.btn-azul { background:var(--azul2); color:white; }
+.btn-verde { background:var(--verde); color:white; }
+.btn-vermelho { background:var(--vermelho); color:white; }
+.btn-cinza { background:#e2e8f0; color:#1e293b; }
+.btn-laranja { background:var(--laranja); color:white; }
+.botoes {
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:10px;
+}
+.botoes button { flex:1; min-width:95px; }
+
+.navegacao-data {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+}
+.navegacao-data button { background:var(--azul); color:white; }
+#dataExibida {
+  flex:1;
+  text-align:center;
+  font-size:14px;
+  font-weight:bold;
+}
+#btnNovaTarefa {
+  width:100%;
+  padding:14px;
+  margin-bottom:12px;
+  background:var(--verde);
+  color:white;
+  font-size:16px;
+}
+#listaTarefas {
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.tarefa {
+  width:100%;
+  min-height:88px;
+  padding:11px 12px;
+  background:white;
+  border:1px solid var(--borda);
+  border-left:5px solid var(--azul2);
+  border-radius:9px;
+}
+.tarefa-concluida {
+  border-left-color:var(--verde);
+  background:#f7fff9;
+}
+.tarefa-atrasada {
+  border-left-color:var(--vermelho);
+  background:#fffafa;
+}
+.tarefa-cabecalho {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:8px;
+}
+.tarefa-titulo {
+  min-width:0;
+  font-size:15px;
+  font-weight:bold;
+  line-height:1.3;
+  overflow-wrap:anywhere;
+}
+.tarefa-horario {
+  flex-shrink:0;
+  color:var(--azul2);
+  font-size:15px;
+  font-weight:bold;
+}
+.tarefa-meta {
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-top:7px;
+  color:var(--cinza);
+  font-size:12px;
+}
+.status {
+  display:inline-block;
+  padding:4px 7px;
+  border-radius:20px;
+  background:#dbeafe;
+  color:#1d4ed8;
+  font-size:11px;
+  font-weight:bold;
+}
+.status-concluida { background:#dcfce7; color:#166534; }
+.status-atrasada { background:#fee2e2; color:#991b1b; }
+.status-importante { background:#ffedd5; color:#9a3412; }
+.status-urgente { background:#fee2e2; color:#991b1b; }
+.status-baixa { background:#e2e8f0; color:#475569; }
+.tarefa-acoes {
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-top:9px;
+}
+.tarefa-acoes button { padding:7px 9px; font-size:11px; }
+.tarefa-detalhes {
+  display:none;
+  margin-top:9px;
+  padding-top:9px;
+  border-top:1px solid var(--borda);
+  font-size:13px;
+  line-height:1.5;
+  overflow-wrap:anywhere;
+}
+.tarefa-detalhes.aberto { display:block; }
+
+.filtros { display:flex; flex-wrap:wrap; gap:7px; }
+.filtros button {
+  flex:1;
+  min-width:65px;
+  padding:9px 7px;
+  background:#e2e8f0;
+  color:#334155;
+  font-size:12px;
+}
+.filtros button.ativo { background:var(--azul2); color:white; }
+
+.configuracao-item {
+  padding:12px 0;
+  border-bottom:1px solid var(--borda);
+}
+.configuracao-item:last-child { border-bottom:0; }
+.configuracao-item label {
+  display:block;
+  margin-bottom:8px;
+  font-weight:bold;
+}
+.texto-auxiliar {
+  color:var(--cinza);
+  font-size:12px;
+  line-height:1.4;
+}
+.audio-nome {
+  margin-top:7px;
+  color:var(--azul);
+  font-size:13px;
+  overflow-wrap:anywhere;
+}
+@media(max-width:500px) {
+  .container { padding:9px; }
+  .painel { padding:12px; }
+  .tarefa { min-height:88px; }
+  .tarefa-acoes button { padding:8px; }
+  .login-card { padding:22px; }
+}
+</style>
+</head>
+
+<body>
+
+<section id="telaLogin">
+  <div class="login-card">
+    <h1>Minha Agenda</h1>
+    <p id="textoLogin">Cadastre uma senha para proteger sua agenda.</p>
+
+    <label for="senhaLogin">Senha</label>
+    <input type="password" id="senhaLogin"
+      placeholder="Digite sua senha" autocomplete="off">
+
+    <div id="areaConfirmacao">
+      <label for="senhaConfirmar">Confirme sua senha</label>
+      <input type="password" id="senhaConfirmar"
+        placeholder="Digite novamente sua senha" autocomplete="off">
+    </div>
+
+    <button type="button" id="btnAcessar" onclick="acessarAgenda()">
+      Cadastrar senha e entrar
+    </button>
+    <div id="mensagemLogin"></div>
+  </div>
+</section>
+
+<main id="aplicativo" class="oculto">
+  <header>
+    <h1>Minha Agenda Inteligente</h1>
+    <p>Organize seus compromissos e tarefas</p>
+  </header>
+
+  <div class="container">
+    <section class="painel">
+      <div class="navegacao-data">
+        <button type="button" onclick="virarDia(-1)">◀</button>
+        <div id="dataExibida"></div>
+        <button type="button" onclick="virarDia(1)">▶</button>
+      </div>
+
+      <div class="botoes">
+        <button type="button" class="btn-cinza" onclick="irParaHoje()">Hoje</button>
+        <button type="button" class="btn-cinza" onclick="abrirConfiguracoes()">Configurações</button>
+        <button type="button" class="btn-vermelho" onclick="sairAgenda()">Sair</button>
+      </div>
+    </section>
+
+    <button type="button" id="btnNovaTarefa" onclick="abrirFormulario()">
+      + Nova tarefa
+    </button>
+
+    <section class="painel oculto" id="painelFormulario">
+      <h2 id="tituloFormulario">Nova tarefa</h2>
+
+      <div class="campo">
+        <label for="tituloTarefa">Título do compromisso</label>
+        <input type="text" id="tituloTarefa"
+          placeholder="Ex.: Reunião, consulta...">
+      </div>
+
+      <div class="linha">
+        <div class="campo">
+          <label for="dataTarefa">Data</label>
+          <input type="date" id="dataTarefa">
+        </div>
+        <div class="campo">
+          <label for="horaTarefa">Horário</label>
+          <input type="time" id="horaTarefa">
+        </div>
+      </div>
+
+      <div class="linha">
+        <div class="campo">
+          <label for="categoriaTarefa">Categoria</label>
+          <select id="categoriaTarefa">
+            <option value="Pessoal">Pessoal</option>
+            <option value="Trabalho">Trabalho</option>
+            <option value="Saúde">Saúde</option>
+            <option value="Família">Família</option>
+            <option value="Estudos">Estudos</option>
+            <option value="Outros">Outros</option>
+          </select>
+        </div>
+
+        <div class="campo">
+          <label for="prioridadeTarefa">Prioridade</label>
+          <select id="prioridadeTarefa">
+            <option value="Baixa">Baixa</option>
+            <option value="Normal" selected>Normal</option>
+            <option value="Importante">Importante</option>
+            <option value="Urgente">Urgente</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="campo">
+        <label for="observacaoTarefa">Observações</label>
+        <textarea id="observacaoTarefa"
+          placeholder="Informações adicionais..."></textarea>
+      </div>
+
+      <div class="campo">
+        <label for="fotoTarefa">Foto (opcional)</label>
+        <input type="file" id="fotoTarefa" accept="image/*">
+      </div>
+
+      <div class="botoes">
+        <button type="button" class="btn-azul"
+          id="btnSalvarTarefa" onclick="salvarTarefa()">Salvar tarefa</button>
+        <button type="button" class="btn-cinza"
+          onclick="fecharFormulario()">Cancelar</button>
+      </div>
+    </section>
+    <section class="painel" id="painelLista">
+      <h2>Minhas tarefas</h2>
+
+      <div class="campo">
+        <label for="pesquisaTarefa">Pesquisar tarefa</label>
+        <input type="search" id="pesquisaTarefa"
+          placeholder="Digite para pesquisar..."
+          oninput="renderizarTarefas()">
+      </div>
+
+      <div class="filtros">
+        <button type="button" class="ativo"
+          onclick="aplicarFiltroRapido('todos',this)">Todas</button>
+        <button type="button"
+          onclick="aplicarFiltroRapido('pendentes',this)">Pendentes</button>
+        <button type="button"
+          onclick="aplicarFiltroRapido('concluidas',this)">Concluídas</button>
+        <button type="button"
+          onclick="aplicarFiltroRapido('atrasadas',this)">Atrasadas</button>
+      </div>
+
+      <div id="listaTarefas" style="margin-top:12px;"></div>
+    </section>
+
+    <section class="painel oculto" id="painelConfiguracoes">
+      <h2>Configurações</h2>
+
+      <div class="configuracao-item">
+        <label for="antecedenciaAviso">Avisar quantos minutos antes?</label>
+        <select id="antecedenciaAviso">
+          <option value="0">No horário</option>
+          <option value="5">5 minutos antes</option>
+          <option value="10">10 minutos antes</option>
+          <option value="15" selected>15 minutos antes</option>
+          <option value="30">30 minutos antes</option>
+          <option value="60">1 hora antes</option>
+        </select>
+      </div>
+
+      <div class="configuracao-item">
+        <label for="intervaloRepeticao">Repetir avisos de Importante e Urgente</label>
+        <select id="intervaloRepeticao">
+          <option value="1">A cada 1 hora</option>
+          <option value="2">A cada 2 horas</option>
+          <option value="3" selected>A cada 3 horas</option>
+          <option value="4">A cada 4 horas</option>
+          <option value="6">A cada 6 horas</option>
+          <option value="8">A cada 8 horas</option>
+          <option value="12">A cada 12 horas</option>
+          <option value="24">A cada 24 horas</option>
+        </select>
+        <p class="texto-auxiliar">
+          Os lembretes repetidos são destinados somente às tarefas
+          Importantes e Urgentes que continuam pendentes.
+        </p>
+      </div>
+
+      <div class="configuracao-item">
+        <label for="somAtivado">Avisos sonoros</label>
+        <select id="somAtivado">
+          <option value="sim">Ativados</option>
+          <option value="nao">Desativados</option>
+        </select>
+      </div>
+
+      <div class="configuracao-item">
+        <label for="arquivoToque">Escolher toque do celular</label>
+        <input type="file" id="arquivoToque" accept="audio/*">
+        <div id="nomeToque" class="audio-nome">
+          Nenhum toque selecionado.
+        </div>
+        <p class="texto-auxiliar">
+          Selecione um arquivo de áudio armazenado no celular.
+          Ele será utilizado nos avisos sonoros enquanto a agenda estiver aberta.
+        </p>
+        <div class="botoes">
+          <button type="button" class="btn-azul" onclick="testarSom()">
+            Testar toque
+          </button>
+          <button type="button" class="btn-vermelho" onclick="pararSomTeste()">
+            Parar som
+          </button>
+          <button type="button" class="btn-cinza" onclick="removerToque()">
+            Remover toque
+          </button>
+        </div>
+      </div>
+
+      <div class="configuracao-item">
+        <label>Permissão de notificações</label>
+        <button type="button" class="btn-azul"
+          onclick="solicitarPermissaoNotificacao()">
+          Ativar notificações
+        </button>
+        <p id="statusNotificacao" class="texto-auxiliar"></p>
+      </div>
+
+      <div class="configuracao-item">
+        <label>Backup dos compromissos</label>
+        <div class="botoes">
+          <button type="button" class="btn-verde"
+            onclick="exportarBackup()">Exportar backup</button>
+          <button type="button" class="btn-azul"
+            onclick="document.getElementById('arquivoBackup').click()">
+            Importar backup
+          </button>
+        </div>
+        <input type="file" id="arquivoBackup"
+          accept=".json,application/json" class="oculto">
+      </div>
+
+      <button type="button" class="btn-verde"
+        style="width:100%;margin-top:12px;"
+        onclick="salvarConfiguracoes()">
+        Salvar configurações
+      </button>
+
+      <button type="button" class="btn-cinza"
+        style="width:100%;margin-top:12px;"
+        onclick="fecharConfiguracoes()">
+        Voltar para agenda
+      </button>
+    </section>
+  </div>
+</main>
+
+<script>
+/* =========================================
+   VARIÁVEIS PRINCIPAIS
+========================================= */
+
+const CHAVE_SENHA = "agenda_completa_senha_v2";
+const CHAVE_TAREFAS = "agenda_completa_tarefas_v2";
+const CHAVE_CONFIG = "agenda_completa_config_v2";
+
+let tarefas = [];
+
+let configuracoes = {
+  antecedenciaAviso: 15,
+  somAtivado: "sim",
+  intervaloRepeticao: 3,
+  toqueSelecionado: ""
+};
+
+let dataAgenda = hoje();
+let filtroAtual = "todos";
+let tarefaEditando = null;
+let avisosEnviados = [];
+let intervaloMonitor = null;
+
+let audioSelecionado = null;
+let urlAudioSelecionado = null;
+let intervaloSomTeste = null;
+let somTesteAtivo = false;
+
+
+/* =========================================
+   FUNÇÕES BÁSICAS
+========================================= */
+
+function hoje() {
+  const data = new Date();
+
+  return [
+    data.getFullYear(),
+    String(data.getMonth() + 1).padStart(2, "0"),
+    String(data.getDate()).padStart(2, "0")
+  ].join("-");
+}
+
+function formatarData(data) {
+  if (!data) return "";
+
+  const partes = data.split("-");
+  if (partes.length !== 3) return data;
+
+  return `${partes[2]}/${partes[1]}/${partes[0]}`;
+}
+
+function escaparHTML(valor) {
+  return String(valor ?? "").replace(/[&<>"']/g, caractere => {
+    const mapa = {
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#039;"
+    };
+    return mapa[caractere];
+  });
+}
+
+function gerarId() {
+  return String(Date.now()) + Math.random().toString(16).slice(2);
+}
+
+
+/* =========================================
+   SISTEMA DE SENHA
+========================================= */
+
+function mostrarMensagemLogin(mensagem, sucesso = false) {
+  const elemento = document.getElementById("mensagemLogin");
+  elemento.textContent = mensagem;
+  elemento.style.color = sucesso ? "#16a34a" : "#dc2626";
+}
+
+function prepararTelaLogin() {
+  const senhaSalva = localStorage.getItem(CHAVE_SENHA);
+  const texto = document.getElementById("textoLogin");
+  const confirmacao = document.getElementById("areaConfirmacao");
+  const botao = document.getElementById("btnAcessar");
+
+  if (senhaSalva) {
+    texto.textContent = "Digite sua senha para acessar sua agenda.";
+    confirmacao.classList.add("oculto");
+    botao.textContent = "Entrar na agenda";
+  } else {
+    texto.textContent = "Cadastre uma senha para proteger sua agenda.";
+    confirmacao.classList.remove("oculto");
+    botao.textContent = "Cadastrar senha e entrar";
+  }
+
+  document.getElementById("senhaLogin").value = "";
+  document.getElementById("senhaConfirmar").value = "";
+  mostrarMensagemLogin("");
+}
+
+function acessarAgenda() {
+  const senha = document.getElementById("senhaLogin").value;
+  const confirmacao = document.getElementById("senhaConfirmar").value;
+
+  if (!senha || senha.trim().length < 4) {
+    mostrarMensagemLogin("A senha deve ter pelo menos 4 caracteres.");
+    return;
+  }
+
+  try {
+    const senhaSalva = localStorage.getItem(CHAVE_SENHA);
+
+    if (!senhaSalva) {
+      if (senha !== confirmacao) {
+        mostrarMensagemLogin("As senhas não são iguais.");
+        return;
+      }
+
+      localStorage.setItem(CHAVE_SENHA, senha);
+      abrirAgenda();
+      return;
+    }
+
+    if (senha !== senhaSalva) {
+      mostrarMensagemLogin("Senha incorreta. Tente novamente.");
+      return;
+    }
+
+    abrirAgenda();
+
+  } catch (erro) {
+    mostrarMensagemLogin("Não foi possível salvar ou verificar a senha.");
+  }
+}
+
+
+/* =========================================
+   ABRIR E FECHAR A AGENDA
+========================================= */
+
+function abrirAgenda() {
+  document.getElementById("telaLogin").classList.add("oculto");
+  document.getElementById("aplicativo").classList.remove("oculto");
+
+  carregarDados();
+  carregarConfiguracoes();
+  transferirPendentesParaHoje();
+  carregarConfiguracoesNaTela();
+
+  dataAgenda = hoje();
+  atualizarDataExibida();
+
+  document.getElementById("dataTarefa").value = dataAgenda;
+
+  fecharFormulario();
+  fecharConfiguracoes();
+  renderizarTarefas();
+
+  carregarToqueSalvo();
+  iniciarMonitorAvisos();
+  sincronizarComAndroid();
+}
+
+function sairAgenda() {
+  pararSomTeste();
+
+  if (intervaloMonitor) {
+    clearInterval(intervaloMonitor);
+    intervaloMonitor = null;
+  }
+
+  document.getElementById("aplicativo").classList.add("oculto");
+  document.getElementById("telaLogin").classList.remove("oculto");
+
+  prepararTelaLogin();
+}
+
+
+/* =========================================
+   ARMAZENAMENTO DE TAREFAS
+========================================= */
+
+function carregarDados() {
+  try {
+    const dados = localStorage.getItem(CHAVE_TAREFAS);
+    tarefas = dados ? JSON.parse(dados) : [];
+
+    if (!Array.isArray(tarefas)) tarefas = [];
+
+  } catch (erro) {
+    tarefas = [];
+  }
+}
+
+function salvarDados() {
+  try {
+    localStorage.setItem(CHAVE_TAREFAS, JSON.stringify(tarefas));
+    sincronizarComAndroid();
+    return true;
+
+  } catch (erro) {
+    alert("Não foi possível salvar os compromissos.");
+    return false;
+  }
+}
+
+
+/* =========================================
+   TRANSFERIR PENDENTES PARA HOJE
+========================================= */
+
+function transferirPendentesParaHoje() {
+  const dataAtual = hoje();
+  let houveAlteracao = false;
+
+  tarefas.forEach(tarefa => {
+    if (!tarefa.concluida && tarefa.data && tarefa.data < dataAtual) {
+      tarefa.data = dataAtual;
+      houveAlteracao = true;
+    }
+  });
+
+  if (houveAlteracao) salvarDados();
+}
+
+
+/* =========================================
+   CONFIGURAÇÕES ARMAZENADAS
+========================================= */
+
+function carregarConfiguracoes() {
+  try {
+    const dados = localStorage.getItem(CHAVE_CONFIG);
+
+    if (dados) {
+      configuracoes = {
+        ...configuracoes,
+        ...JSON.parse(dados)
+      };
+    }
+  } catch (erro) {
+    console.log("Erro ao carregar configurações.");
+  }
+
+  configuracoes.intervaloRepeticao =
+    Number(configuracoes.intervaloRepeticao || 3);
+}
+
+function salvarConfiguracoesDados() {
+  try {
+    localStorage.setItem(CHAVE_CONFIG, JSON.stringify(configuracoes));
+    sincronizarComAndroid();
+    return true;
+  } catch (erro) {
+    alert("Não foi possível salvar as configurações.");
+    return false;
+  }
+}
+/* =========================================
+   FORMULÁRIO DE TAREFAS
+========================================= */
+
+function abrirFormulario() {
+  tarefaEditando = null;
+  limparFormulario();
+
+  document.getElementById("tituloFormulario").textContent = "Nova tarefa";
+  document.getElementById("btnSalvarTarefa").textContent = "Salvar tarefa";
+  document.getElementById("painelFormulario").classList.remove("oculto");
+  document.getElementById("btnNovaTarefa").classList.add("oculto");
+  document.getElementById("dataTarefa").value = dataAgenda;
+
+  document.getElementById("painelFormulario").scrollIntoView({
+    behavior:"smooth",
+    block:"start"
+  });
+
+  document.getElementById("tituloTarefa").focus();
+}
+
+function fecharFormulario() {
+  document.getElementById("painelFormulario").classList.add("oculto");
+  document.getElementById("btnNovaTarefa").classList.remove("oculto");
+  tarefaEditando = null;
+  limparFormulario();
+}
+
+function limparFormulario() {
+  document.getElementById("tituloTarefa").value = "";
+  document.getElementById("dataTarefa").value = dataAgenda;
+  document.getElementById("horaTarefa").value = "";
+  document.getElementById("categoriaTarefa").value = "Pessoal";
+  document.getElementById("prioridadeTarefa").value = "Normal";
+  document.getElementById("observacaoTarefa").value = "";
+  document.getElementById("fotoTarefa").value = "";
+
+  document.getElementById("tituloFormulario").textContent = "Nova tarefa";
+  document.getElementById("btnSalvarTarefa").textContent = "Salvar tarefa";
+}
+
+
+/* =========================================
+   SALVAR TAREFA
+========================================= */
+
+function salvarTarefa() {
+  const titulo = document.getElementById("tituloTarefa").value.trim();
+  const data = document.getElementById("dataTarefa").value;
+  const hora = document.getElementById("horaTarefa").value;
+  const categoria = document.getElementById("categoriaTarefa").value;
+  const prioridade = document.getElementById("prioridadeTarefa").value;
+  const observacao = document.getElementById("observacaoTarefa").value.trim();
+  const arquivo = document.getElementById("fotoTarefa").files[0];
+
+  if (!titulo) {
+    alert("Digite o título da tarefa.");
+    return;
+  }
+
+  if (!data || !hora) {
+    alert("Informe a data e o horário.");
+    return;
+  }
+
+  const estavaEditando = tarefaEditando !== null;
+  const idEmEdicao = tarefaEditando;
+
+  const continuarSalvamento = function(foto) {
+    const dadosTarefa = {
+      titulo,
+      data,
+      hora,
+      categoria,
+      prioridade,
+      observacao,
+      foto:foto || "",
+      concluida:false,
+      ultimoAviso:0
+    };
+
+    if (idEmEdicao !== null) {
+      const indice = tarefas.findIndex(t => t.id === idEmEdicao);
+
+      if (indice !== -1) {
+        dadosTarefa.id = idEmEdicao;
+        dadosTarefa.concluida = tarefas[indice].concluida;
+
+        // Mantém o controle de repetição se apenas o texto foi editado.
+        if (
+          tarefas[indice].data === data &&
+          tarefas[indice].hora === hora &&
+          tarefas[indice].prioridade === prioridade
+        ) {
+          dadosTarefa.ultimoAviso = tarefas[indice].ultimoAviso || 0;
+        }
+
+        tarefas[indice] = dadosTarefa;
+      }
+    } else {
+      dadosTarefa.id = gerarId();
+      tarefas.push(dadosTarefa);
+    }
+
+    if (salvarDados()) {
+      dataAgenda = data;
+      atualizarDataExibida();
+      renderizarTarefas();
+      fecharFormulario();
+
+      alert(
+        estavaEditando
+          ? "Tarefa atualizada com sucesso!"
+          : "Tarefa adicionada com sucesso!"
+      );
+    }
+  };
+
+  if (arquivo) {
+    const leitor = new FileReader();
+
+    leitor.onload = function(evento) {
+      continuarSalvamento(evento.target.result);
+    };
+
+    leitor.onerror = function() {
+      alert("Não foi possível carregar a foto.");
+    };
+
+    leitor.readAsDataURL(arquivo);
+
+  } else if (idEmEdicao !== null) {
+    const existente = tarefas.find(t => t.id === idEmEdicao);
+    continuarSalvamento(existente ? existente.foto : "");
+  } else {
+    continuarSalvamento("");
+  }
+}
+
+
+/* =========================================
+   EDITAR TAREFA
+========================================= */
+
+function editarTarefa(id) {
+  const tarefa = tarefas.find(t => t.id === id);
+  if (!tarefa) return;
+
+  tarefaEditando = id;
+
+  document.getElementById("tituloTarefa").value = tarefa.titulo;
+  document.getElementById("dataTarefa").value = tarefa.data;
+  document.getElementById("horaTarefa").value = tarefa.hora;
+  document.getElementById("categoriaTarefa").value =
+    tarefa.categoria || "Pessoal";
+
+  document.getElementById("prioridadeTarefa").value =
+    tarefa.prioridade || "Normal";
+
+  document.getElementById("observacaoTarefa").value =
+    tarefa.observacao || "";
+
+  document.getElementById("fotoTarefa").value = "";
+
+  document.getElementById("tituloFormulario").textContent = "Editar tarefa";
+  document.getElementById("btnSalvarTarefa").textContent = "Salvar alterações";
+
+  document.getElementById("painelFormulario").classList.remove("oculto");
+  document.getElementById("btnNovaTarefa").classList.add("oculto");
+
+  document.getElementById("painelFormulario").scrollIntoView({
+    behavior:"smooth",
+    block:"start"
+  });
+}
+
+
+/* =========================================
+   CONCLUIR E EXCLUIR
+========================================= */
+
+function concluirTarefa(id) {
+  const tarefa = tarefas.find(t => t.id === id);
+  if (!tarefa) return;
+
+  tarefa.concluida = !tarefa.concluida;
+
+  if (tarefa.concluida) {
+    tarefa.ultimoAviso = 0;
+  }
+
+  salvarDados();
+  renderizarTarefas();
+}
+
+function excluirTarefa(id) {
+  if (!confirm("Deseja realmente excluir esta tarefa?")) return;
+
+  tarefas = tarefas.filter(t => t.id !== id);
+
+  salvarDados();
+  renderizarTarefas();
+}
+
+
+/* =========================================
+   DETALHES DA TAREFA
+========================================= */
+
+function mostrarDetalhes(id) {
+  const elemento = document.getElementById("detalhes-" + id);
+
+  if (elemento) elemento.classList.toggle("aberto");
+}
+
+
+/* =========================================
+   SITUAÇÃO DA TAREFA
+========================================= */
+
+function horarioAtrasado(tarefa) {
+  if (tarefa.concluida) return false;
+
+  const horario = new Date(`${tarefa.data}T${tarefa.hora}:00`);
+  return horario.getTime() < Date.now();
+}
+
+
+/* =========================================
+   EXIBIR TAREFAS
+========================================= */
+
+function renderizarTarefas() {
+  const lista = document.getElementById("listaTarefas");
+  if (!lista) return;
+
+  const pesquisa = (
+    document.getElementById("pesquisaTarefa").value || ""
+  ).toLowerCase();
+
+  let filtradas = tarefas.filter(tarefa => tarefa.data === dataAgenda);
+
+  if (filtroAtual === "pendentes") {
+    filtradas = filtradas.filter(t => !t.concluida && !horarioAtrasado(t));
+  }
+
+  if (filtroAtual === "concluidas") {
+    filtradas = filtradas.filter(t => t.concluida);
+  }
+
+  if (filtroAtual === "atrasadas") {
+    filtradas = filtradas.filter(t => horarioAtrasado(t));
+  }
+
+  if (pesquisa) {
+    filtradas = filtradas.filter(tarefa => {
+      const conteudo = [
+        tarefa.titulo,
+        tarefa.categoria,
+        tarefa.prioridade,
+        tarefa.observacao
+      ].join(" ").toLowerCase();
+
+      return conteudo.includes(pesquisa);
+    });
+  }
+
+  filtradas.sort((a,b) => a.hora.localeCompare(b.hora));
+
+  if (filtradas.length === 0) {
+    lista.innerHTML = `
+      <div style="
+        text-align:center;
+        color:#64748b;
+        padding:22px 10px;
+        background:#f8fafc;
+        border-radius:9px;
+        font-size:14px;
+      ">
+        Nenhuma tarefa encontrada para esta data.
+      </div>
+    `;
+    return;
+  }
+
+  lista.innerHTML = filtradas.map(tarefa => {
+    const atrasada = horarioAtrasado(tarefa);
+
+    let classeTarefa = "";
+    let textoStatus = "Pendente";
+    let classeStatus = "";
+
+    if (tarefa.concluida) {
+      classeTarefa = "tarefa-concluida";
+      textoStatus = "Concluída";
+      classeStatus = "status-concluida";
+    } else if (atrasada) {
+      classeTarefa = "tarefa-atrasada";
+      textoStatus = "Atrasada";
+      classeStatus = "status-atrasada";
+    }
+
+    const prioridade = tarefa.prioridade || "Normal";
+
+    if (prioridade === "Importante") classeStatus += " status-importante";
+    if (prioridade === "Urgente") classeStatus += " status-urgente";
+    if (prioridade === "Baixa") classeStatus += " status-baixa";
+
+    const id = escaparHTML(tarefa.id);
+
+    const fotoHTML = tarefa.foto ? `
+      <br><br>
+      <img src="${tarefa.foto}" alt="Foto da tarefa"
+        style="max-width:100%;max-height:180px;border-radius:8px;">
+    ` : "";
+
+    return `
+      <article class="tarefa ${classeTarefa}">
+        <div class="tarefa-cabecalho">
+          <div class="tarefa-titulo">${escaparHTML(tarefa.titulo)}</div>
+          <div class="tarefa-horario">${escaparHTML(tarefa.hora)}</div>
+        </div>
+
+        <div class="tarefa-meta">
+          <span>${escaparHTML(tarefa.categoria || "Outros")}</span>
+          <span>•</span>
+          <span>${escaparHTML(prioridade)}</span>
+          <span class="status ${classeStatus}">${textoStatus}</span>
+        </div>
+
+        <div class="tarefa-acoes">
+          <button type="button" class="btn-verde"
+            onclick="concluirTarefa('${id}')">
+            ${tarefa.concluida ? "Reabrir" : "Concluir"}
+          </button>
+
+          <button type="button" class="btn-azul"
+            onclick="editarTarefa('${id}')">Editar</button>
+
+          <button type="button" class="btn-cinza"
+            onclick="mostrarDetalhes('${id}')">Detalhes</button>
+
+          <button type="button" class="btn-vermelho"
+            onclick="excluirTarefa('${id}')">Excluir</button>
+        </div>
+
+        <div class="tarefa-detalhes" id="detalhes-${id}">
+          <strong>Observações:</strong><br>
+          ${escaparHTML(tarefa.observacao || "Nenhuma observação.")}
+          ${fotoHTML}
+        </div>
+      </article>
+    `;
+  }).join("");
+}
+
+
+/* =========================================
+   FILTROS
+========================================= */
+
+function aplicarFiltroRapido(filtro, botao) {
+  filtroAtual = filtro;
+
+  document.querySelectorAll(".filtros button").forEach(item => {
+    item.classList.remove("ativo");
+  });
+
+  if (botao) botao.classList.add("ativo");
+
+  renderizarTarefas();
+}
+
+
+/* =========================================
+   NAVEGAÇÃO ENTRE DATAS
+========================================= */
+
+function atualizarDataExibida() {
+  const elemento = document.getElementById("dataExibida");
+  if (!elemento) return;
+
+  const data = new Date(dataAgenda + "T12:00:00");
+
+  elemento.textContent = data.toLocaleDateString("pt-BR", {
+    weekday:"long",
+    day:"2-digit",
+    month:"long",
+    year:"numeric"
+  });
+}
+
+function virarDia(direcao) {
+  const data = new Date(dataAgenda + "T12:00:00");
+  data.setDate(data.getDate() + direcao);
+
+  dataAgenda = [
+    data.getFullYear(),
+    String(data.getMonth() + 1).padStart(2,"0"),
+    String(data.getDate()).padStart(2,"0")
+  ].join("-");
+
+  atualizarDataExibida();
+  document.getElementById("dataTarefa").value = dataAgenda;
+  renderizarTarefas();
+}
+
+function irParaHoje() {
+  dataAgenda = hoje();
+  atualizarDataExibida();
+  document.getElementById("dataTarefa").value = dataAgenda;
+  renderizarTarefas();
+}
+/* =========================================
+   CONFIGURAÇÕES
+========================================= */
+
+function abrirConfiguracoes() {
+  fecharFormulario();
+
+  document.getElementById("painelConfiguracoes").classList.remove("oculto");
+  carregarConfiguracoesNaTela();
+
+  document.getElementById("painelConfiguracoes").scrollIntoView({
+    behavior:"smooth",
+    block:"start"
+  });
+}
+
+function fecharConfiguracoes() {
+  document.getElementById("painelConfiguracoes").classList.add("oculto");
+}
+
+function carregarConfiguracoesNaTela() {
+  carregarConfiguracoes();
+
+  document.getElementById("antecedenciaAviso").value =
+    String(configuracoes.antecedenciaAviso ?? 15);
+
+  document.getElementById("intervaloRepeticao").value =
+    String(configuracoes.intervaloRepeticao || 3);
+
+  document.getElementById("somAtivado").value =
+    configuracoes.somAtivado || "sim";
+
+  atualizarStatusNotificacao();
+  atualizarNomeToque();
+}
+
+function salvarConfiguracoes() {
+  configuracoes.antecedenciaAviso = Number(
+    document.getElementById("antecedenciaAviso").value
+  );
+
+  configuracoes.intervaloRepeticao = Number(
+    document.getElementById("intervaloRepeticao").value
+  );
+
+  configuracoes.somAtivado =
+    document.getElementById("somAtivado").value;
+
+  if (salvarConfiguracoesDados()) {
+    sincronizarComAndroid();
+    alert("Configurações salvas com sucesso!");
+    fecharConfiguracoes();
+  }
+}
+
+
+/* =========================================
+   BANCO DE ÁUDIO DO CELULAR
+   O áudio fica no armazenamento local do app.
+========================================= */
+
+const NOME_BANCO_AUDIO = "MinhaAgendaAudio";
+const NOME_ARMAZENAMENTO_AUDIO = "toques";
+
+function abrirBancoAudio() {
+  return new Promise((resolve,reject) => {
+    if (!("indexedDB" in window)) {
+      reject(new Error("Armazenamento de áudio indisponível."));
+      return;
+    }
+
+    const pedido = indexedDB.open(NOME_BANCO_AUDIO,1);
+
+    pedido.onupgradeneeded = function(evento) {
+      const banco = evento.target.result;
+
+      if (!banco.objectStoreNames.contains(NOME_ARMAZENAMENTO_AUDIO)) {
+        banco.createObjectStore(NOME_ARMAZENAMENTO_AUDIO);
+      }
+    };
+
+    pedido.onsuccess = () => resolve(pedido.result);
+    pedido.onerror = () => reject(pedido.error);
+  });
+}
+
+async function salvarToqueNoBanco(arquivo) {
+  const banco = await abrirBancoAudio();
+
+  return new Promise((resolve,reject) => {
+    const transacao = banco.transaction(
+      NOME_ARMAZENAMENTO_AUDIO,"readwrite"
+    );
+
+    transacao.objectStore(NOME_ARMAZENAMENTO_AUDIO).put(
+      arquivo,"toqueAtual"
+    );
+
+    transacao.oncomplete = () => {
+      banco.close();
+      resolve(true);
+    };
+
+    transacao.onerror = () => {
+      banco.close();
+      reject(transacao.error);
+    };
+  });
+}
+
+async function obterToqueDoBanco() {
+  const banco = await abrirBancoAudio();
+
+  return new Promise((resolve,reject) => {
+    const transacao = banco.transaction(
+      NOME_ARMAZENAMENTO_AUDIO,"readonly"
+    );
+
+    const pedido = transacao.objectStore(
+      NOME_ARMAZENAMENTO_AUDIO
+    ).get("toqueAtual");
+
+    pedido.onsuccess = () => {
+      const arquivo = pedido.result || null;
+      banco.close();
+      resolve(arquivo);
+    };
+
+    pedido.onerror = () => {
+      banco.close();
+      reject(pedido.error);
+    };
+  });
+}
+
+async function apagarToqueDoBanco() {
+  const banco = await abrirBancoAudio();
+
+  return new Promise((resolve,reject) => {
+    const transacao = banco.transaction(
+      NOME_ARMAZENAMENTO_AUDIO,"readwrite"
+    );
+
+    transacao.objectStore(NOME_ARMAZENAMENTO_AUDIO).delete("toqueAtual");
+
+    transacao.oncomplete = () => {
+      banco.close();
+      resolve(true);
+    };
+
+    transacao.onerror = () => {
+      banco.close();
+      reject(transacao.error);
+    };
+  });
+}
+
+function atualizarNomeToque(nome) {
+  const elemento = document.getElementById("nomeToque");
+  if (!elemento) return;
+
+  elemento.textContent = nome || configuracoes.toqueSelecionado ||
+    "Nenhum toque selecionado.";
+}
+
+async function carregarToqueSalvo() {
+  try {
+    const arquivo = await obterToqueDoBanco();
+
+    if (arquivo) {
+      audioSelecionado = arquivo;
+
+      if (urlAudioSelecionado) {
+        URL.revokeObjectURL(urlAudioSelecionado);
+      }
+
+      urlAudioSelecionado = URL.createObjectURL(arquivo);
+      atualizarNomeToque();
+    }
+  } catch (erro) {
+    console.log("Não foi possível carregar o toque salvo.");
+  }
+}
+
+async function selecionarToque(evento) {
+  const arquivo = evento.target.files[0];
+  if (!arquivo) return;
+
+  if (!arquivo.type.startsWith("audio/")) {
+    alert("Escolha um arquivo de áudio válido.");
+    evento.target.value = "";
+    return;
+  }
+
+  try {
+    await salvarToqueNoBanco(arquivo);
+
+    audioSelecionado = arquivo;
+
+    if (urlAudioSelecionado) {
+      URL.revokeObjectURL(urlAudioSelecionado);
+    }
+
+    urlAudioSelecionado = URL.createObjectURL(arquivo);
+
+    configuracoes.toqueSelecionado = arquivo.name;
+    salvarConfiguracoesDados();
+
+    atualizarNomeToque(arquivo.name);
+
+    alert("Toque selecionado e salvo com sucesso!");
+
+  } catch (erro) {
+    alert("Não foi possível salvar esse áudio no celular.");
+  }
+
+  evento.target.value = "";
+}
+
+async function removerToque() {
+  if (!confirm("Deseja remover o toque personalizado?")) return;
+
+  pararSomTeste();
+
+  try {
+    await apagarToqueDoBanco();
+
+    audioSelecionado = null;
+
+    if (urlAudioSelecionado) {
+      URL.revokeObjectURL(urlAudioSelecionado);
+      urlAudioSelecionado = null;
+    }
+
+    configuracoes.toqueSelecionado = "";
+    salvarConfiguracoesDados();
+
+    atualizarNomeToque("Nenhum toque selecionado.");
+
+    alert("Toque removido. Será usado o aviso sonoro padrão.");
+
+  } catch (erro) {
+    alert("Não foi possível remover o toque.");
+  }
+}
+
+
+/* =========================================
+   SISTEMA DE SOM
+========================================= */
+
+let audioReproducao = null;
+
+function tocarSom() {
+  if (configuracoes.somAtivado !== "sim") return;
+
+  if (urlAudioSelecionado) {
+    try {
+      if (!audioReproducao) {
+        audioReproducao = new Audio();
+      }
+
+      audioReproducao.pause();
+      audioReproducao.currentTime = 0;
+      audioReproducao.src = urlAudioSelecionado;
+      audioReproducao.volume = 1;
+
+      const promessa = audioReproducao.play();
+
+      if (promessa && promessa.catch) {
+        promessa.catch(() => {
+          tocarSomPadrao();
+        });
+      }
+
+      return;
+
+    } catch (erro) {
+      tocarSomPadrao();
+      return;
+    }
+  }
+
+  tocarSomPadrao();
+}
+
+function tocarSomPadrao() {
+  try {
+    const AudioContext =
+      window.AudioContext || window.webkitAudioContext;
+
+    if (!AudioContext) return;
+
+    if (!window.contextoAudio) {
+      window.contextoAudio = new AudioContext();
+    }
+
+    const audio = window.contextoAudio;
+
+    if (audio.state === "suspended") {
+      audio.resume();
+    }
+
+    const oscilador = audio.createOscillator();
+    const volume = audio.createGain();
+
+    oscilador.type = "sine";
+    oscilador.frequency.value = 880;
+
+    volume.gain.setValueAtTime(0.0001,audio.currentTime);
+    volume.gain.exponentialRampToValueAtTime(
+      0.25,audio.currentTime + 0.03
+    );
+    volume.gain.exponentialRampToValueAtTime(
+      0.0001,audio.currentTime + 0.35
+    );
+
+    oscilador.connect(volume);
+    volume.connect(audio.destination);
+
+    oscilador.start();
+    oscilador.stop(audio.currentTime + 0.4);
+
+  } catch (erro) {
+    console.log("Não foi possível reproduzir o som.");
+  }
+}
+
+function testarSom() {
+  if (somTesteAtivo) {
+    pararSomTeste();
+    return;
+  }
+
+  if (configuracoes.somAtivado !== "sim") {
+    alert("Ative os avisos sonoros nas configurações primeiro.");
+    return;
+  }
+
+  somTesteAtivo = true;
+
+  tocarSom();
+
+  document.querySelector(
+    '#painelConfiguracoes button[onclick="testarSom()"]'
+  ).textContent = "Som tocando...";
+
+  intervaloSomTeste = setInterval(() => {
+    if (somTesteAtivo) tocarSom();
+  },2500);
+}
+
+function pararSomTeste() {
+  somTesteAtivo = false;
+
+  if (intervaloSomTeste) {
+    clearInterval(intervaloSomTeste);
+    intervaloSomTeste = null;
+  }
+
+  if (audioReproducao) {
+    audioReproducao.pause();
+    audioReproducao.currentTime = 0;
+  }
+
+  const botoes = document.querySelectorAll(
+    '#painelConfiguracoes button[onclick="testarSom()"]'
+  );
+
+  botoes.forEach(botao => {
+    botao.textContent = "Testar toque";
+  });
+}
+
+
+/* =========================================
+   NOTIFICAÇÕES DO NAVEGADOR
+========================================= */
+
+function atualizarStatusNotificacao() {
+  const elemento = document.getElementById("statusNotificacao");
+  if (!elemento) return;
+
+  if (!("Notification" in window)) {
+    elemento.textContent =
+      "Notificações não disponíveis neste navegador.";
+    return;
+  }
+
+  if (Notification.permission === "granted") {
+    elemento.textContent = "Permissão de notificações concedida.";
+  } else if (Notification.permission === "denied") {
+    elemento.textContent =
+      "Notificações bloqueadas nas permissões do navegador.";
+  } else {
+    elemento.textContent = "Notificações ainda não foram autorizadas.";
+  }
+}
+
+async function solicitarPermissaoNotificacao() {
+  if (!("Notification" in window)) {
+    alert("Este navegador não oferece suporte a notificações.");
+    return;
+  }
+
+  try {
+    const permissao = await Notification.requestPermission();
+
+    atualizarStatusNotificacao();
+
+    if (permissao === "granted") {
+      alert("Permissão para notificações concedida!");
+    } else {
+      alert("A permissão para notificações não foi concedida.");
+    }
+  } catch (erro) {
+    alert("Não foi possível solicitar a permissão.");
+  }
+}
+
+function enviarNotificacao(tarefa) {
+  if (!("Notification" in window)) return;
+  if (Notification.permission !== "granted") return;
+
+  try {
+    new Notification("Minha Agenda Inteligente", {
+      body:`${tarefa.prioridade}: ${tarefa.titulo} - ${tarefa.hora}`
+    });
+  } catch (erro) {
+    console.log("Não foi possível exibir a notificação.");
+  }
+}
+
+
+/* =========================================
+   CONTROLE DOS AVISOS REPETIDOS
+========================================= */
+
+function tarefaTemAvisoRepetido(tarefa) {
+  return (
+    tarefa.prioridade === "Importante" ||
+    tarefa.prioridade === "Urgente"
+  );
+}
+
+function obterHorarioInicialAviso(tarefa) {
+  const horarioTarefa = new Date(
+    `${tarefa.data}T${tarefa.hora}:00`
+  );
+
+  const antecedencia =
+    Number(configuracoes.antecedenciaAviso || 0);
+
+  return horarioTarefa.getTime() - antecedencia * 60000;
+}
+
+function verificarAvisos() {
+  const agora = Date.now();
+
+  tarefas.forEach(tarefa => {
+    if (tarefa.concluida) return;
+    if (!tarefa.data || !tarefa.hora) return;
+
+    const horarioInicial = obterHorarioInicialAviso(tarefa);
+
+    if (agora < horarioInicial) return;
+
+    const identificador =
+      `${tarefa.id}_${tarefa.data}_${tarefa.hora}_${tarefa.prioridade}`;
+
+    const intervaloHoras = tarefaTemAvisoRepetido(tarefa)
+      ? Number(configuracoes.intervaloRepeticao || 3)
+      : 0;
+
+    const intervaloMs = intervaloHoras * 60 * 60 * 1000;
+
+    let deveAvisar = false;
+
+    if (!tarefa.ultimoAviso) {
+      deveAvisar = true;
+    } else if (
+      intervaloMs > 0 &&
+      agora - Number(tarefa.ultimoAviso) >= intervaloMs
+    ) {
+      deveAvisar = true;
+    }
+
+    if (!deveAvisar) return;
+
+    // Evita avisos duplicados no mesmo ciclo do monitor.
+    if (avisosEnviados.includes(identificador + "_" +
+        Math.floor(agora / 60000))) return;
+
+    avisosEnviados.push(
+      identificador + "_" + Math.floor(agora / 60000)
+    );
+
+    tarefa.ultimoAviso = agora;
+
+    salvarDados();
+    enviarNotificacao(tarefa);
+
+    if (configuracoes.somAtivado === "sim") {
+      tocarSom();
+    }
+  });
+
+  // Limita o tamanho da lista de controle.
+  if (avisosEnviados.length > 300) {
+    avisosEnviados = avisosEnviados.slice(-100);
+  }
+}
+
+function iniciarMonitorAvisos() {
+  if (intervaloMonitor) clearInterval(intervaloMonitor);
+
+  verificarAvisos();
+
+  intervaloMonitor = setInterval(() => {
+    verificarAvisos();
+  },15000);
+}
+/* =========================================
+   INTEGRAÇÃO COM O KODULAR / ANDROID
+========================================= */
+
+/*
+  Esta função envia as tarefas e configurações para o Kodular.
+
+  O WebViewer do Kodular precisa receber a propriedade WebViewString
+  e tratar o evento WebViewStringChange.
+
+  O aplicativo Android deverá usar esses dados para agendar
+  notificações nativas, inclusive com o aplicativo fechado.
+*/
+
+function sincronizarComAndroid() {
+  const tarefasParaAndroid = tarefas
+    .filter(tarefa => !tarefa.concluida)
+    .map(tarefa => {
+      const horarioInicial = obterHorarioInicialAviso(tarefa);
+
+      return {
+        id:String(tarefa.id),
+        titulo:String(tarefa.titulo || ""),
+        data:String(tarefa.data || ""),
+        hora:String(tarefa.hora || ""),
+        prioridade:String(tarefa.prioridade || "Normal"),
+        categoria:String(tarefa.categoria || ""),
+        concluida:Boolean(tarefa.concluida),
+        horarioInicial:horarioInicial,
+        intervaloHoras:tarefaTemAvisoRepetido(tarefa)
+          ? Number(configuracoes.intervaloRepeticao || 3)
+          : 0,
+        ultimoAviso:Number(tarefa.ultimoAviso || 0)
+      };
+    });
+
+  const mensagem = {
+    tipo:"SINCRONIZAR_AGENDA",
+    tarefas:tarefasParaAndroid,
+    configuracoes:{
+      antecedenciaAviso:Number(configuracoes.antecedenciaAviso || 0),
+      intervaloRepeticao:Number(configuracoes.intervaloRepeticao || 3),
+      somAtivado:configuracoes.somAtivado || "sim",
+      toqueSelecionado:configuracoes.toqueSelecionado || ""
+    }
+  };
+
+  try {
+    if (
+      window.AppInventor &&
+      typeof window.AppInventor.setWebViewString === "function"
+    ) {
+      window.AppInventor.setWebViewString(JSON.stringify(mensagem));
+    } else {
+      console.log(
+        "Integração nativa não encontrada. Agenda funcionando no navegador."
+      );
+    }
+  } catch (erro) {
+    console.log("Não foi possível sincronizar com o Android.",erro);
+  }
+}
+
+
+/* =========================================
+   EXPORTAR BACKUP
+========================================= */
+
+function exportarBackup() {
+  const backup = {
+    versao:2,
+    dataExportacao:new Date().toISOString(),
+    tarefas,
+    configuracoes
+  };
+
+  const arquivo = new Blob(
+    [JSON.stringify(backup,null,2)],
+    {type:"application/json"}
+  );
+
+  const url = URL.createObjectURL(arquivo);
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = "backup-minha-agenda.json";
+
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  setTimeout(() => URL.revokeObjectURL(url),1000);
+}
+
+
+/* =========================================
+   IMPORTAR BACKUP
+========================================= */
+
+function importarBackup(evento) {
+  const arquivo = evento.target.files[0];
+  if (!arquivo) return;
+
+  const leitor = new FileReader();
+
+  leitor.onload = function() {
+    try {
+      const backup = JSON.parse(leitor.result);
+
+      const tarefasImportadas = Array.isArray(backup)
+        ? backup
+        : backup.tarefas;
+
+      if (!Array.isArray(tarefasImportadas)) {
+        throw new Error("Formato inválido");
+      }
+
+      if (!confirm(
+        "A importação substituirá as tarefas atuais. Deseja continuar?"
+      )) {
+        evento.target.value = "";
+        return;
+      }
+
+      tarefas = tarefasImportadas.map(tarefa => ({
+        ...tarefa,
+        prioridade: tarefa.prioridade || "Normal",
+        ultimoAviso: Number(tarefa.ultimoAviso || 0)
+      }));
+
+      if (backup.configuracoes && !Array.isArray(backup)) {
+        configuracoes = {
+          ...configuracoes,
+          ...backup.configuracoes
+        };
+      }
+
+      salvarDados();
+      salvarConfiguracoesDados();
+
+      carregarConfiguracoesNaTela();
+      renderizarTarefas();
+      sincronizarComAndroid();
+
+      alert("Backup importado com sucesso!");
+
+    } catch (erro) {
+      alert("Não foi possível importar. Verifique o arquivo escolhido.");
+
+    } finally {
+      evento.target.value = "";
+    }
+  };
+
+  leitor.readAsText(arquivo);
+}
+
+
+/* =========================================
+   INICIALIZAÇÃO
+========================================= */
+
+document.addEventListener("DOMContentLoaded",function() {
+  try {
+    carregarDados();
+    carregarConfiguracoes();
+    prepararTelaLogin();
+
+    document.getElementById("senhaLogin").addEventListener(
+      "keydown",
+      function(evento) {
+        if (evento.key === "Enter") acessarAgenda();
+      }
+    );
+
+    document.getElementById("senhaConfirmar").addEventListener(
+      "keydown",
+      function(evento) {
+        if (evento.key === "Enter") acessarAgenda();
+      }
+    );
+
+    document.getElementById("arquivoBackup").addEventListener(
+      "change",
+      importarBackup
+    );
+
+    document.getElementById("arquivoToque").addEventListener(
+      "change",
+      selecionarToque
+    );
+
+    atualizarStatusNotificacao();
+
+  } catch (erro) {
+    console.error("Erro ao iniciar a agenda:",erro);
+
+    alert(
+      "Ocorreu um erro ao iniciar a agenda. Feche e abra novamente."
+    );
+  }
+});
+
+</script>
+
+</body>
+</html>
